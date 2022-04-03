@@ -90,7 +90,8 @@ class ConversationHandler:
                          "lat": self.message.location.latitude, "lon": self.message.location.longitude},
                      "timestamp": datetime.now().replace(microsecond=0).isoformat()}}
 
-        self.initialize_next_step(ConversationState.SUPPORT_CATEGORY, state, replace_state_with_new_value=True)
+        self.initialize_next_step(
+            ConversationState.SUPPORT_CATEGORY, state, replace_state_with_new_value=True)
 
     def category(self, state):
         selected_category = self.__get_button_id(
@@ -103,13 +104,16 @@ class ConversationHandler:
     def subcategory(self, state):
         state["support_category"]["support_subcategory"] = self.__get_button_id(
             SUPPORT_SUBCATEGORY, self.message.text)
+        state["results"] = {"page": 0}
 
-        self.initialize_next_step(ConversationState.RESULT, state)
-        self.result_information(state)
+        update_state(self.user_id, ConversationState.RESULTS_PAGE, state)
+        self.results_page(state)
 
-    def result_information(self, state):
+    def results_page(self, state):
+        page = state["results"]["page"]
         request_category = state["support_category"]["support_subcategory"]
-        self.bot.send_message(self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
+        self.bot.send_message(
+            self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,

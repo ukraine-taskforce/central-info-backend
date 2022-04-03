@@ -1,7 +1,7 @@
 import logging
 import os
 import json
-from conversation_state import SUPPORT_SUBCATEGORY, SUPPORT_CATEGORY
+from conversation_state import RESULTS_PAGE, SUPPORT_SUBCATEGORY, SUPPORT_CATEGORY
 
 from conversation_handler import ConversationHandler
 
@@ -63,6 +63,8 @@ def handle_message(message):
         conv_handler.category(state)
     elif conv_state == ConversationState.SUPPORT_SUBCATEGORY and message.text in conv_handler.get_reply_options(SUPPORT_SUBCATEGORY):
         conv_handler.subcategory(state)
+    elif conv_state == ConversationState.RESULTS_PAGE and message.text in conv_handler.get_reply_options(RESULTS_PAGE):
+        conv_handler.results_page(state)
     else:
         conv_handler.process_unknown_prompt(conv_state, state)
 
