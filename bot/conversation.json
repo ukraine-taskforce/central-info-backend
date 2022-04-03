@@ -3,7 +3,12 @@
     "message": [
       {
         "text": {
-          "en": "Report an incident by clicking the button bellow"
+          "en": "🔒 We need you to share your location to show the closest solution available. We don't store any sensitive data about you."
+        }
+      },
+      {
+        "text": {
+          "en": "📍 Where are you looking for information?"
         }
       }
     ],
@@ -11,7 +16,7 @@
       {
         "id": "REPORT_LOCATION",
         "text": {
-          "en": "Report incident location"
+          "en": "Share location"
         },
         "kwargs": {
           "request_location": true
@@ -19,84 +24,110 @@
       }
     ]
   },
-  "incident": {
+  "support_category": {
     "message": [
       {
         "text": {
-          "en": "What would you like to report?"
+          "en": "❓What do you want to know?"
         }
       }
     ],
     "reply_markup": [
       {
-        "id": "BOMBING_OR_EXPLOSION",
+        "id": "GENERAL",
         "text": {
-          "en": "\uD83D\uDCA5 Bombing or explosion \uD83D\uDCA5"
+          "en": "🧐 General information"
         }
       },
       {
-        "id": "MILITARY_ON_FOOT",
+        "id": "MEDICS",
         "text": {
-          "en": "Suspected Russian military on foot"
+          "en": "🏥 Medics"
         }
       },
       {
-        "id": "MILITARY_ON_VEHICLE",
+        "id": "LEGAL",
         "text": {
-          "en": "Suspected Russian military vehicle"
+          "en": "🏛 Legal support"
+        }
+      },
+      {
+        "id": "JOB",
+        "text": {
+          "en": "💪 Job"
+        }
+      },
+      {
+        "id": "SCHOOLS",
+        "text": {
+          "en": "📚 Schools"
         }
       }
     ]
   },
-  "distance": {
+  "support_subcategory": {
     "message": [
       {
-        "conditional_text": [
-          {
-            "condition": "\"{state[incident][type]}\" == \"BOMBING_OR_EXPLOSION\"",
-            "text": {
-              "en": "How close did the bombing or explosion happen to the location you shared?"
-            }
-          },
-          {
-            "condition": "\"{state[incident][type]}\" == \"MILITARY_ON_FOOT\"",
-            "text": {
-              "en": "How close did you spot the military on foot to the location you shared?"
-            }
-          },
-          {
-            "condition": "\"{state[incident][type]}\" == \"MILITARY_ON_VEHICLE\"",
-            "text": {
-              "en": "How close did you spot the military on vehicle to the location you shared?"
-            }
-          }
-        ]
+        "text": {
+          "en": "👇 Select a topic"
+        }
       }
     ],
     "reply_markup": [
       {
-        "id": "NEXT_TO_ME",
+        "id": "PREGNANCY",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
         "text": {
-          "en": "Right next to me"
+          "en": "Pregnancy"
         }
       },
       {
-        "id": "CLOSE",
+        "id": "ELDERLY",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
         "text": {
-          "en": "5-10 minutes of walk from me"
+          "en": "Elderly people"
         }
       },
       {
-        "id": "FAR",
+        "id": "DISABILITIES",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
         "text": {
-          "en": "Visible, but not close"
+          "en": "Disabilities"
         }
       },
       {
-        "id": "NOT_SURE",
-        "condition": "\"{state[incident][type]}\" == \"BOMBING_OR_EXPLOSION\"",
+        "id": "CHRONIC_DESEASE",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
         "text": {
-          "en": "I am not sure"
+          "en": "Chronic desease"
+        }
+      },
+      {
+        "id": "PSYCHOLOGICAL_SUPPORT",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "text": {
+          "en": "Psychological support"
+        }
+      },
+      {
+        "id": "GOODS",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "text": {
+          "en": "Essential goods"
+        }
+      },
+      {
+        "id": "KIDS_CARE",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "text": {
+          "en": "Kids care/help"
+        }
+      },
+      {
+        "id": "VETS",
+        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "text": {
+          "en": "Vets"
         }
       }
     ]
@@ -106,19 +137,19 @@
       {
         "conditional_text": [
           {
-            "condition": "\"{state[incident][type]}\" == \"BOMBING_OR_EXPLOSION\"",
+            "condition": "\"{state[support_category][type]}\" == \"BOMBING_OR_EXPLOSION\"",
             "text": {
               "en": "When did the bombing or explosion happen?"
             }
           },
           {
-            "condition": "\"{state[incident][type]}\" == \"MILITARY_ON_FOOT\"",
+            "condition": "\"{state[support_category][type]}\" == \"MILITARY_ON_FOOT\"",
             "text": {
               "en": "When did you spot military on foot?"
             }
           },
           {
-            "condition": "\"{state[incident][type]}\" == \"MILITARY_ON_VEHICLE\"",
+            "condition": "\"{state[support_category][type]}\" == \"MILITARY_ON_VEHICLE\"",
             "text": {
               "en": "When did you spot military on vehicle?"
             }

@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, Message
-from conversation_state import CONV_STATE_TO_CATEGORY, DISTANCE, END, ERROR, INCIDENT, START, TIME
+from conversation_state import CONV_STATE_TO_CATEGORY, SUPPORT_SUBCATEGORY, END, ERROR, SUPPORT_CATEGORY, START, TIME
 from local_providers.state import ConversationState, update_state, set_state, delete_state
 from local_providers.reporting import send_report
 
@@ -30,11 +30,20 @@ class ConversationHandler:
                     text = conditional_text["text"].get(
                         self.language_code, conditional_text["text"]["en"])
                     break
+
             if text is None:
-                text = message["text"].get(
-                    self.language_code, message["text"]["en"])
+                default_text = message.get("text")
+                if not default_text:
+                    logging.warn(f"No text returned for category {category}. Message: {message}")
+                    continue
+
+                text = default_text.get(self.language_code, default_text["en"])
 
             result.append((text, {}))
+
+        if len(result) == 0:
+            logging.error(f'User action got no reply. Category: {category}')
+            return result
 
         reply_markup_block = self.conversation[reply_markup_category or category]
         if "reply_markup" not in reply_markup_block:
@@ -68,28 +77,30 @@ class ConversationHandler:
 
     def location(self):
         state = {"user": {"language_code": self.language_code, "id": str(self.user_id)},
-                 "incident": {
+                 "support_category": {
                      "location": {
                          "lat": self.message.location.latitude, "lon": self.message.location.longitude},
                      "timestamp": datetime.now().replace(microsecond=0).isoformat()}}
 
-        for message_text, kwargs in self.__list_messages(INCIDENT, state):
+        for message_text, kwargs in self.__list_messages(SUPPORT_CATEGORY, state):
             self.bot.send_message(self.chat_id, message_text, **kwargs)
 
-        set_state(self.user_id, ConversationState.CATEGORY, state)
+        set_state(self.user_id, ConversationState.SUPPORT_CATEGORY, state)
 
     def category(self, state):
-        selected_category = self.__get_button_id(INCIDENT, self.message.text)
-        state["incident"]["type"] = selected_category
+        selected_category = self.__get_button_id(
+            SUPPORT_CATEGORY, self.message.text)
+        state["support_category"]["type"] = selected_category
+        logging.info(f'Selected category: {selected_category}')
 
-        for message_text, kwargs in self.__list_messages(DISTANCE, state):
+        for message_text, kwargs in self.__list_messages(SUPPORT_SUBCATEGORY, state):
             self.bot.send_message(self.chat_id, message_text, **kwargs)
 
-        update_state(self.user_id, ConversationState.LOCATION_DETAILS, state)
+        update_state(self.user_id, ConversationState.SUPPORT_SUBCATEGORY, state)
 
-    def process_location_details(self, state):
-        state["incident"]["distance"] = self.__get_button_id(
-            DISTANCE, self.message.text)
+    def subcategory(self, state):
+        state["support_category"]["support_subcategory"] = self.__get_button_id(
+            SUPPORT_SUBCATEGORY, self.message.text)
 
         for message_text, kwargs in self.__list_messages(TIME, state):
             self.bot.send_message(self.chat_id, message_text, **kwargs)
@@ -97,7 +108,7 @@ class ConversationHandler:
         update_state(self.user_id, ConversationState.TIME, state)
 
     def process_time_details(self, state):
-        state["incident"]["time"] = self.__get_button_id(
+        state["support_category"]["time"] = self.__get_button_id(
             TIME, self.message.text)
 
         for message_text, kwargs in self.__list_messages(END, state):

@@ -1,7 +1,7 @@
 import logging
 import os
 import json
-from conversation_state import DISTANCE, INCIDENT, TIME
+from conversation_state import SUPPORT_SUBCATEGORY, SUPPORT_CATEGORY, TIME
 
 from conversation_handler import ConversationHandler
 
@@ -48,7 +48,6 @@ def lambda_handler(event: dict, context):
 
 @bot.message_handler(func=lambda _: True, content_types=['text', 'location'])
 def handle_message(message):
-    logging.info(f'Handling message "{message}"')
     if not message:
         return
 
@@ -58,14 +57,13 @@ def handle_message(message):
         return
 
     conv_state, state = get_state(message.from_user.id)
-    logging.info(f'State: {conv_state}, {state}')
     if message.location:
         conv_handler.location()
-    elif message.text in conv_handler.get_reply_options(INCIDENT) and conv_state == ConversationState.CATEGORY:
+    elif message.text in conv_handler.get_reply_options(SUPPORT_CATEGORY) and conv_state == ConversationState.SUPPORT_CATEGORY:
         conv_handler.category(state)
     elif message.text in conv_handler.get_reply_options(
-            DISTANCE) and conv_state == ConversationState.LOCATION_DETAILS:
-        conv_handler.process_location_details(state)
+            SUPPORT_SUBCATEGORY) and conv_state == ConversationState.SUPPORT_SUBCATEGORY:
+        conv_handler.subcategory(state)
     elif message.text in conv_handler.get_reply_options(TIME) and conv_state == ConversationState.TIME:
         conv_handler.process_time_details(state)
     else:
