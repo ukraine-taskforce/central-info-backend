@@ -3,8 +3,8 @@ import logging
 
 from datetime import datetime
 from telebot import TeleBot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton, Message
-from conversation_state import CONV_STATE_TO_CATEGORY, SUPPORT_SUBCATEGORY, END, ERROR, SUPPORT_CATEGORY, START, TIME
+from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, Message
+from conversation_state import CONV_STATE_TO_CATEGORY, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
 from local_providers.state import ConversationState, update_state, set_state, delete_state
 from local_providers.reporting import send_report
 
@@ -109,19 +109,7 @@ class ConversationHandler:
 
     def result_information(self, state):
         request_category = state["support_category"]["support_subcategory"]
-        self.bot.send_message(self.chat_id, f'Results for {self.message.text}:')
-
-    def process_time_details(self, state):
-        state["support_category"]["time"] = self.__get_button_id(
-            TIME, self.message.text)
-
-        for message_text, kwargs in self.__list_messages(END, state):
-            self.bot.send_message(self.chat_id, message_text, **kwargs)
-
-        self.start()
-
-        response = send_report(state)
-        logging.info(f"SQS Response: {response}")
+        self.bot.send_message(self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,
