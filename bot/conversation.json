@@ -75,6 +75,76 @@
     ],
     "reply_markup": [
       {
+        "id": "ENTRY_STEPS",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Entry steps"
+        }
+      },
+      {
+        "id": "HOUSING",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Housing"
+        }
+      },
+      {
+        "id": "FINANCIAL_SUPPORT",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Financial support"
+        }
+      },
+      {
+        "id": "LANGUAGE_LEARNING",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Language learning"
+        }
+      },
+      {
+        "id": "HEALTH_CARE",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Health care"
+        }
+      },
+      {
+        "id": "LEGAL_SUPPORT",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Legal support"
+        }
+      },
+      {
+        "id": "ELEMENTARY_EDUCATION",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Elementary education"
+        }
+      },
+      {
+        "id": "SCHOOLS",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Schools"
+        }
+      },
+      {
+        "id": "UNIVERSITIES",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Universities"
+        }
+      },
+      {
+        "id": "COMMUNITY_GROUPS",
+        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "text": {
+          "en": "Community groups"
+        }
+      },
+      {
         "id": "PREGNANCY",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
         "text": {
