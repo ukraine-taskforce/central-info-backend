@@ -34,7 +34,8 @@ class ConversationHandler:
             if text is None:
                 default_text = message.get("text")
                 if not default_text:
-                    logging.warn(f"No text returned for category {category}. Message: {message}")
+                    logging.warn(
+                        f"No text returned for category {category}. Message: {message}")
                     continue
 
                 text = default_text.get(self.language_code, default_text["en"])
@@ -42,7 +43,7 @@ class ConversationHandler:
             result.append((text, {}))
 
         if len(result) == 0:
-            logging.error(f'User action got no reply. Category: {category}')
+            logging.warn(f'User action got no reply. Category: {category}')
             return result
 
         reply_markup_block = self.conversation[reply_markup_category or category]
@@ -69,11 +70,18 @@ class ConversationHandler:
         for button in self.conversation[category].get("reply_markup", []):
             yield button["text"].get(self.language_code, button["text"]["en"])
 
-    def start(self):
-        for message_text, kwargs in self.__list_messages(START):
+    def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False):
+        for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data):
             self.bot.send_message(self.chat_id, message_text, **kwargs)
 
-        delete_state(self.user_id)
+        if replace_state_with_new_value:
+            set_state(self.user_id, state, data)
+        else:
+            update_state(self.user_id, state, data)
+
+    def start(self):
+        self.initialize_next_step(
+            ConversationState.START, {}, replace_state_with_new_value=True)
 
     def location(self):
         state = {"user": {"language_code": self.language_code, "id": str(self.user_id)},
@@ -82,10 +90,7 @@ class ConversationHandler:
                          "lat": self.message.location.latitude, "lon": self.message.location.longitude},
                      "timestamp": datetime.now().replace(microsecond=0).isoformat()}}
 
-        for message_text, kwargs in self.__list_messages(SUPPORT_CATEGORY, state):
-            self.bot.send_message(self.chat_id, message_text, **kwargs)
-
-        set_state(self.user_id, ConversationState.SUPPORT_CATEGORY, state)
+        self.initialize_next_step(ConversationState.SUPPORT_CATEGORY, state, replace_state_with_new_value=True)
 
     def category(self, state):
         selected_category = self.__get_button_id(
@@ -93,19 +98,18 @@ class ConversationHandler:
         state["support_category"]["type"] = selected_category
         logging.info(f'Selected category: {selected_category}')
 
-        for message_text, kwargs in self.__list_messages(SUPPORT_SUBCATEGORY, state):
-            self.bot.send_message(self.chat_id, message_text, **kwargs)
-
-        update_state(self.user_id, ConversationState.SUPPORT_SUBCATEGORY, state)
+        self.initialize_next_step(ConversationState.SUPPORT_SUBCATEGORY, state)
 
     def subcategory(self, state):
         state["support_category"]["support_subcategory"] = self.__get_button_id(
             SUPPORT_SUBCATEGORY, self.message.text)
 
-        for message_text, kwargs in self.__list_messages(TIME, state):
-            self.bot.send_message(self.chat_id, message_text, **kwargs)
+        self.initialize_next_step(ConversationState.RESULT, state)
+        self.result_information(state)
 
-        update_state(self.user_id, ConversationState.TIME, state)
+    def result_information(self, state):
+        request_category = state["support_category"]["support_subcategory"]
+        self.bot.send_message(self.chat_id, f'Results for {self.message.text}:')
 
     def process_time_details(self, state):
         state["support_category"]["time"] = self.__get_button_id(
