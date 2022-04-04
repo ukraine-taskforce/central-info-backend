@@ -203,7 +203,13 @@
     ]
   },
   "results": {
-    "message": []
+    "message": [
+      {
+        "text": {
+          "en": "Results for {category}:"
+        }
+      }
+    ]
   },
   "end": {
     "message": [

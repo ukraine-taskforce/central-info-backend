@@ -4,13 +4,15 @@ import logging
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, Message
-from conversation_state import CONV_STATE_TO_CATEGORY, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
-from local_providers.state import ConversationState, update_state, set_state, delete_state
+from conversation_state import CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
+from local_providers.get_centralized_info import get_centralized_info
+from local_providers.state import ConversationState, update_state, set_state
 from local_providers.reporting import send_report
 
 
 class ConversationHandler:
     def __init__(self, bot: TeleBot, message: Message):
+        self.__results_page_size = 3;
         self.bot = bot
         self.message = message
         self.language_code = message.from_user.language_code
@@ -18,7 +20,7 @@ class ConversationHandler:
         self.user_id = message.from_user.id
         self.conversation = json.loads(open("conversation.json").read())
 
-    def __list_messages(self, category, state=None, reply_markup_category=None):
+    def __list_messages(self, category, state=None, reply_markup_category=None, format_message_args_map={}):
         result = []
         if state is None:
             state = {}
@@ -28,7 +30,8 @@ class ConversationHandler:
             for conditional_text in message.get("conditional_text", []):
                 if eval(conditional_text["condition"].format(state=state)):
                     text = conditional_text["text"].get(
-                        self.language_code, conditional_text["text"]["en"])
+                        self.language_code, conditional_text["text"]["en"]).format_map(
+                            format_message_args_map)
                     break
 
             if text is None:
@@ -38,7 +41,9 @@ class ConversationHandler:
                         f"No text returned for category {category}. Message: {message}")
                     continue
 
-                text = default_text.get(self.language_code, default_text["en"])
+                text = default_text.get(self.language_code, default_text["en"]).format_map(
+                    format_message_args_map
+                )
 
             result.append((text, {}))
 
@@ -70,8 +75,8 @@ class ConversationHandler:
         for button in self.conversation[category].get("reply_markup", []):
             yield button["text"].get(self.language_code, button["text"]["en"])
 
-    def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False):
-        for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data):
+    def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False, format_message_args_map={}):
+        for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data, format_message_args_map=format_message_args_map):
             self.bot.send_message(self.chat_id, message_text, **kwargs)
 
         if replace_state_with_new_value:
@@ -84,6 +89,7 @@ class ConversationHandler:
             ConversationState.START, {}, replace_state_with_new_value=True)
 
     def location(self):
+        logging.info(f'Location received: {self.message.location}')
         state = {"user": {"language_code": self.language_code, "id": str(self.user_id)},
                  "support_category": {
                      "location": {
@@ -97,23 +103,43 @@ class ConversationHandler:
         selected_category = self.__get_button_id(
             SUPPORT_CATEGORY, self.message.text)
         state["support_category"]["type"] = selected_category
-        logging.info(f'Selected category: {selected_category}')
 
         self.initialize_next_step(ConversationState.SUPPORT_SUBCATEGORY, state)
 
     def subcategory(self, state):
-        state["support_category"]["support_subcategory"] = self.__get_button_id(
+        selected_category = self.__get_button_id(
             SUPPORT_SUBCATEGORY, self.message.text)
-        state["results"] = {"page": 0}
+        state["support_category"]["support_subcategory"] = {
+            "id": selected_category,
+            "name": self.message.text
+        }
+        state["results"] = {"page": 0, "can_load_more": True}
 
         update_state(self.user_id, ConversationState.RESULTS_PAGE, state)
         self.results_page(state)
 
     def results_page(self, state):
         page = state["results"]["page"]
+        next_action = None if page == 0 else self.__get_button_id(
+            RESULTS_PAGE, self.message.text)
+        if next_action == SUGGEST_LOCATION_CHANGE:
+            self.initialize_next_step(
+                ConversationState.SUGGEST_LOCATION_CHANGE, state)
+            return
+
+        # load page data
         request_category = state["support_category"]["support_subcategory"]
-        self.bot.send_message(
-            self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
+        data, can_load_more = get_centralized_info(
+            "TODO", request_category["id"], self.__results_page_size, page)
+        format_args = {
+            "category": request_category["name"]
+        }
+
+        state["results"]["page"] = page + 1
+        self.initialize_next_step(
+            ConversationState.RESULTS_PAGE, state, format_message_args_map=format_args)
+        # self.bot.send_message(
+        #     self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,
