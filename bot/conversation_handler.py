@@ -59,20 +59,20 @@ class ConversationHandler:
             if "condition" in button and not eval(button["condition"].format(state=state)):
                 continue
 
-            markup.add(KeyboardButton(button["text"].get(self.language_code, button["text"]["en"]),
-                                      **button.get("kwargs", {})))
+            markup.add(KeyboardButton(
+                t(button["text_key"]), **button.get("kwargs", {})))
 
         result.append((result.pop()[0], {"reply_markup": markup}))
         return result
 
     def __get_button_id(self, category, button_text):
         for button in self.conversation[category].get("reply_markup", []):
-            if button["text"].get(self.language_code, button["text"]["en"]) == button_text:
+            if t(button["text_key"]) == button_text:
                 return button["id"]
 
     def get_reply_options(self, category):
         for button in self.conversation[category].get("reply_markup", []):
-            yield button["text"].get(self.language_code, button["text"]["en"])
+            yield t(button["text_key"])
 
     def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False, format_message_args_map={}):
         for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data, format_message_args_map=format_message_args_map):

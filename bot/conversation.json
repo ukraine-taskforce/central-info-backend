@@ -14,10 +14,8 @@
     ],
     "reply_markup": [
       {
-        "id": "REPORT_LOCATION",
-        "text": {
-          "en": "Share location"
-        },
+        "id": "SHARE_LOCATION",
+        "text_key": "btn_share_location",
         "kwargs": {
           "request_location": true
         }
@@ -33,33 +31,23 @@
     "reply_markup": [
       {
         "id": "GENERAL",
-        "text": {
-          "en": "🧐 General information"
-        }
+        "text_key": "btn_general"
       },
       {
         "id": "MEDICS",
-        "text": {
-          "en": "🏥 Medics"
-        }
+        "text_key": "btn_medics"
       },
       {
         "id": "LEGAL",
-        "text": {
-          "en": "🏛 Legal support"
-        }
+        "text_key": "btn_legal"
       },
       {
         "id": "JOB",
-        "text": {
-          "en": "💪 Job"
-        }
+        "text_key": "btn_job"
       },
       {
         "id": "SCHOOLS",
-        "text": {
-          "en": "📚 Schools"
-        }
+        "text_key": "btn_schools"
       }
     ]
   },
@@ -73,128 +61,92 @@
       {
         "id": "ENTRY_STEPS",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Entry steps"
-        }
+        "text_key": "btn_entry_steps"
       },
       {
         "id": "HOUSING",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Housing"
-        }
+        "text_key": "btn_housing"
       },
       {
         "id": "FINANCIAL_SUPPORT",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Financial support"
-        }
+        "text_key": "btn_financial"
       },
       {
         "id": "LANGUAGE_LEARNING",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Language learning"
-        }
+        "text_key": "btn_language"
       },
       {
         "id": "HEALTH_CARE",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Health care"
-        }
+        "text_key": "btn_health"
       },
       {
         "id": "LEGAL_SUPPORT",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Legal support"
-        }
+        "text_key": "btn_legal"
       },
       {
         "id": "ELEMENTARY_EDUCATION",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Elementary education"
-        }
+        "text_key": "btn_elementary"
       },
       {
         "id": "SCHOOLS",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Schools"
-        }
+        "text_key": "btn_schools"
       },
       {
         "id": "UNIVERSITIES",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Universities"
-        }
+        "text_key": "btn_universities"
       },
       {
         "id": "COMMUNITY_GROUPS",
         "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
-        "text": {
-          "en": "Community groups"
-        }
+        "text_key": "btn_community"
       },
       {
         "id": "PREGNANCY",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Pregnancy"
-        }
+        "text_key": "btn_pregnancy"
       },
       {
         "id": "ELDERLY",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Elderly people"
-        }
+        "text_key": "btn_elderly"
       },
       {
         "id": "DISABILITIES",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Disabilities"
-        }
+        "text_key": "btn_disabilities"
       },
       {
         "id": "CHRONIC_DESEASE",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Chronic desease"
-        }
+        "text_key": "btn_desease"
       },
       {
         "id": "PSYCHOLOGICAL_SUPPORT",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Psychological support"
-        }
+        "text_key": "btn_psych_support"
       },
       {
         "id": "GOODS",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Essential goods"
-        }
+        "text_key": "btn_goods"
       },
       {
         "id": "KIDS_CARE",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Kids care/help"
-        }
+        "text_key": "btn_kids_care"
       },
       {
         "id": "VETS",
         "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
-        "text": {
-          "en": "Vets"
-        }
+        "text_key": "btn_vets"
       }
     ]
   },
@@ -208,15 +160,11 @@
       {
         "id": "NEXT_PAGE",
         "condition": "{state[results][can_load_more]}",
-        "text": {
-          "en": "See more results"
-        }
+        "text_key": "btn_more_results"
       },
       {
         "id": "SUGGEST_LOCATION_CHANGE",
-        "text": {
-          "en": "Search other information"
-        }
+        "text_key": "btn_search_other_info"
       }
     ]
   },
@@ -229,15 +177,11 @@
     "reply_markup": [
       {
         "id": "SUPPORT_CATEGORY",
-        "text": {
-          "en": "Use same location"
-        }
+        "text_key": "btn_use_same_location"
       },
       {
         "id": "REQUEST_LOCATION",
-        "text": {
-          "en": "Change location"
-        }
+        "text_key": "btn_change_location"
       }
     ]
   },

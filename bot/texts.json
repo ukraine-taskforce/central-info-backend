@@ -28,5 +28,83 @@
   },
   "no_more_results_available": {
     "en": "☝️ No more results currently available"
+  },
+  "btn_share_location": {
+    "en": "Share location"
+  },
+  "btn_general": {
+    "en": "🧐 General information"
+  },
+  "btn_medics": {
+    "en": "🏥 Medics"
+  },
+  "btn_legal": {
+    "en": "🏛 Legal support"
+  },
+  "btn_job": {
+    "en": "💪 Job"
+  },
+  "btn_schools": {
+    "en": "📚 Schools"
+  },
+  "btn_entry_steps": {
+    "en": "Entry steps"
+  },
+  "btn_housing": {
+    "en": "Housing"
+  },
+  "btn_financial": {
+    "en": "Financial support"
+  },
+  "btn_language": {
+    "en": "Language learning"
+  },
+  "btn_health": {
+    "en": "Health care"
+  },
+  "btn_elementary": {
+    "en": "Elementary education"
+  },
+  "btn_universities": {
+    "en": "Universities"
+  },
+  "btn_community": {
+    "en": "Community groups"
+  },
+  "btn_pregnancy": {
+    "en": "Pregnancy"
+  },
+  "btn_elderly": {
+    "en": "Elderly people"
+  },
+  "btn_disabilities": {
+    "en": "Disabilities"
+  },
+  "btn_desease": {
+    "en": "Desease"
+  },
+  "btn_psych_support": {
+    "en": "Psychological support"
+  },
+  "btn_goods": {
+    "en": "Essential goods"
+  },
+  "btn_kids_care": {
+    "en": "Kids care/help"
+  },
+  "btn_vets": {
+    "en": "Vets"
+  },
+  "btn_more_results": {
+    "en": "See more results"
+  },
+  "btn_search_other_info": {
+    "en": "Search other information"
+  },
+  "btn_use_same_location": {
+    "en": "Use same location"
+  },
+  "btn_change_location": {
+    "en": "Change location"
   }
 }
