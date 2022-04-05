@@ -3,14 +3,13 @@ import logging
 
 from datetime import datetime
 from telebot import TeleBot
-from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, Message
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, Message
 from text_translations import t, set_localization
 from information_node import InformationNode
 from get_file_content import get_file_content
 from conversation_state import CATEGORY_TO_CONV_STATE, CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
 from local_providers.get_centralized_info import get_centralized_info
 from local_providers.state import ConversationState, update_state, set_state
-from local_providers.reporting import send_report
 
 
 class ConversationHandler:
@@ -34,23 +33,18 @@ class ConversationHandler:
             text = None
             for conditional_text in message.get("conditional_text", []):
                 if eval(conditional_text["condition"].format(state=state)):
-                    text = conditional_text["text"].get(
-                        self.language_code, conditional_text["text"]["en"]).format_map(
-                            format_message_args_map)
+                    text = t(conditional_text["text_key"])
                     break
 
             if text is None:
-                default_text = message.get("text")
-                if not default_text:
+                default_text = message.get("text_key")
+                text = None if not default_text else t(default_text)
+                if not text:
                     logging.warn(
                         f"No text returned for category {category}. Message: {message}")
                     continue
 
-                text = default_text.get(self.language_code, default_text["en"]).format_map(
-                    format_message_args_map
-                )
-
-            result.append((text, {}))
+            result.append((text.format_map(format_message_args_map), {}))
 
         if len(result) == 0:
             logging.warn(f'User action got no reply. Category: {category}')

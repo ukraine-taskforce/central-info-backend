@@ -2,18 +2,14 @@
   "start": {
     "message": [
       {
-        "text": {
-          "en": "🔒 We need you to share your location to show the closest solution available. We don't store any sensitive data about you."
-        }
+        "text_key": "start_message"
       }
     ]
   },
   "request_location": {
     "message": [
       {
-        "text": {
-          "en": "📍 Where are you looking for information?"
-        }
+        "text_key": "request_location_message"
       }
     ],
     "reply_markup": [
@@ -31,9 +27,7 @@
   "support_category": {
     "message": [
       {
-        "text": {
-          "en": "❓What do you want to know?"
-        }
+        "text_key": "choose_category_message"
       }
     ],
     "reply_markup": [
@@ -72,9 +66,7 @@
   "support_subcategory": {
     "message": [
       {
-        "text": {
-          "en": "👇 Select a topic"
-        }
+        "text_key": "choose_subcategory_message"
       }
     ],
     "reply_markup": [
@@ -209,9 +201,7 @@
   "results": {
     "message": [
       {
-        "text": {
-          "en": "{card_header}\n\n{card_content}\n\n{card_footer}"
-        }
+        "text_key": "result_card"
       }
     ],
     "reply_markup": [
@@ -233,9 +223,7 @@
   "suggest_location_change": {
     "message": [
       {
-        "text": {
-          "en": "Location change suggestion here"
-        }
+        "text_key": "suggest_location_change_message"
       }
     ],
     "reply_markup": [
@@ -253,26 +241,10 @@
       }
     ]
   },
-  "end": {
-    "message": [
-      {
-        "text": {
-          "en": "Your report has been recorded and processed by the authorities."
-        }
-      },
-      {
-        "text": {
-          "en": "Advice for being close to incident, what to do, how to get to safety asap, what we recommend doing, etc."
-        }
-      }
-    ]
-  },
   "error": {
     "message": [
       {
-        "text": {
-          "en": "Information not received.\nPlease use options below.\n⬇️ ⬇️ ⬇️"
-        }
+        "text_key": "invalid_message_error"
       }
     ]
   }

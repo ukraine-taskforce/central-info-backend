@@ -1,4 +1,25 @@
 {
+  "start_message": {
+    "en": "🔒 We need you to share your location to show the closest solution available. We don't store any sensitive data about you."
+  },
+  "request_location_message": {
+    "en": "📍 Where are you looking for information?"
+  },
+  "choose_category_message": {
+    "en": "❓ What do you want to know?"
+  },
+  "choose_subcategory_message": {
+    "en": "👇 Select a topic"
+  },
+  "result_card": {
+    "en": "{card_header}\n\n{card_content}\n\n{card_footer}"
+  },
+  "suggest_location_change_message": {
+    "en": "📍 Are you still looking for information in the same location or do you want to change it?"
+  },
+  "invalid_message_error": {
+    "en": "Information not received.\nPlease use options below.\n⬇️ ⬇️ ⬇️"
+  },
   "results_for_category": {
     "en": "🔍 Results for {category}:"
   },
