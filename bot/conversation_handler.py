@@ -4,6 +4,8 @@ import logging
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, Message
+from information_node import InformationNode
+from get_file_content import get_file_content
 from conversation_state import CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
 from local_providers.get_centralized_info import get_centralized_info
 from local_providers.state import ConversationState, update_state, set_state
@@ -12,7 +14,7 @@ from local_providers.reporting import send_report
 
 class ConversationHandler:
     def __init__(self, bot: TeleBot, message: Message):
-        self.__results_page_size = 3;
+        self.__results_page_size = 3
         self.bot = bot
         self.message = message
         self.language_code = message.from_user.language_code
@@ -138,8 +140,23 @@ class ConversationHandler:
         state["results"]["page"] = page + 1
         self.initialize_next_step(
             ConversationState.RESULTS_PAGE, state, format_message_args_map=format_args)
-        # self.bot.send_message(
-        #     self.chat_id, f'Results for {self.message.text}:', reply_markup=ReplyKeyboardRemove())
+
+        # render cards by template
+        card_template = get_file_content('templates/information_card.template')
+        node_template = get_file_content('templates/information_node.template')
+
+        mapped_data = map(lambda x: InformationNode(
+            x["ID"], 25, x["Hyperlink"], "maplink", x["Category"]), data)
+        nodes = '\n'.join(
+            map(lambda x: node_template.format_map(x.to_map()), mapped_data))
+        message_content = {
+            "header": "header",
+            "content": nodes,
+            "footer": "footer"
+        }
+        message = card_template.format_map(message_content)
+        self.bot.send_message(
+            self.chat_id, message, reply_markup=ReplyKeyboardRemove())
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,
