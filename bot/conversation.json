@@ -209,6 +209,30 @@
           "en": "{card_header}\n\n{card_content}\n\n{card_footer}"
         }
       }
+    ],
+    "reply_markup": [
+      {
+        "id": "NEXT_PAGE",
+        "condition": "{state[results][can_load_more]}",
+        "text": {
+          "en": "See more results"
+        }
+      },
+      {
+        "id": "SUGGEST_LOCATION_CHANGE",
+        "text": {
+          "en": "Search other information"
+        }
+      }
+    ]
+  },
+  "suggest_location_change": {
+    "message": [
+      {
+        "text": {
+          "en": "Location change suggestion here"
+        }
+      }
     ]
   },
   "end": {

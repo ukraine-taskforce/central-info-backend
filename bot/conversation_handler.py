@@ -126,7 +126,7 @@ class ConversationHandler:
     def results_page(self, state):
         page = state["results"]["page"]
         next_action = None if page == 0 else self.__get_button_id(
-            RESULTS_PAGE, self.message.text)
+            RESULTS_PAGE, self.message.text).lower()
         if next_action == SUGGEST_LOCATION_CHANGE:
             self.initialize_next_step(
                 ConversationState.SUGGEST_LOCATION_CHANGE, state)
@@ -141,6 +141,7 @@ class ConversationHandler:
         }
 
         state["results"]["page"] = page + 1
+        state["results"]["can_load_more"] = can_load_more
         
         # render cards by template
         node_template = get_file_content('templates/information_node.template')
