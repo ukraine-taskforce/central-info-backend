@@ -7,7 +7,7 @@ from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButt
 from text_translations import t, set_localization
 from information_node import InformationNode
 from get_file_content import get_file_content
-from conversation_state import CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
+from conversation_state import CATEGORY_TO_CONV_STATE, CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
 from local_providers.get_centralized_info import get_centralized_info
 from local_providers.state import ConversationState, update_state, set_state
 from local_providers.reporting import send_report
@@ -90,8 +90,11 @@ class ConversationHandler:
             update_state(self.user_id, state, data)
 
     def start(self):
+        state = {}
         self.initialize_next_step(
-            ConversationState.START, {}, replace_state_with_new_value=True)
+            ConversationState.START, state, replace_state_with_new_value=True)
+        self.initialize_next_step(
+            ConversationState.REQUEST_LOCATION, state)
 
     def location(self):
         logging.info(f'Location received: {self.message.location}')
@@ -142,7 +145,7 @@ class ConversationHandler:
 
         state["results"]["page"] = page + 1
         state["results"]["can_load_more"] = can_load_more
-        
+
         # render cards by template
         node_template = get_file_content('templates/information_node.template')
 
@@ -151,7 +154,8 @@ class ConversationHandler:
         nodes = '\n'.join(
             map(lambda x: node_template.format_map(x.to_map()), mapped_data))
 
-        header = t("results_for_category") if page == 0 else t("more_results_for_category")
+        header = t("results_for_category") if page == 0 else t(
+            "more_results_for_category")
         format_args = {
             "card_header": header.format(category=request_category["name"]),
             "card_content": nodes,
@@ -159,6 +163,12 @@ class ConversationHandler:
         }
         self.initialize_next_step(
             ConversationState.RESULTS_PAGE, state, format_message_args_map=format_args)
+
+    def suggest_location_change(self, state):
+        next_state = self.__get_button_id(
+            SUGGEST_LOCATION_CHANGE, self.message.text).lower()
+        self.initialize_next_step(
+            CATEGORY_TO_CONV_STATE[next_state], state)
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,

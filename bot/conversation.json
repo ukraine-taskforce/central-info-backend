@@ -5,7 +5,11 @@
         "text": {
           "en": "🔒 We need you to share your location to show the closest solution available. We don't store any sensitive data about you."
         }
-      },
+      }
+    ]
+  },
+  "request_location": {
+    "message": [
       {
         "text": {
           "en": "📍 Where are you looking for information?"
@@ -231,6 +235,20 @@
       {
         "text": {
           "en": "Location change suggestion here"
+        }
+      }
+    ],
+    "reply_markup": [
+      {
+        "id": "SUPPORT_CATEGORY",
+        "text": {
+          "en": "Use same location"
+        }
+      },
+      {
+        "id": "REQUEST_LOCATION",
+        "text": {
+          "en": "Change location"
         }
       }
     ]
