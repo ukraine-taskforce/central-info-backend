@@ -206,7 +206,7 @@
     "message": [
       {
         "text": {
-          "en": "Results for {category}:"
+          "en": "{card_header}\n\n{card_content}\n\n{card_footer}"
         }
       }
     ]

@@ -1,0 +1,11 @@
+{
+  "results_for_category": {
+    "en": "🔍 Results for {category}:"
+  },
+  "more_results_for_category": {
+    "en": "🔍 More results for {category}:"
+  },
+  "no_more_results_available": {
+    "text": "☝️ No more results currently available"
+  }
+}

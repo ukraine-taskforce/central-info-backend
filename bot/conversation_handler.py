@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, Message
+from text_translations import t, set_localization
 from information_node import InformationNode
 from get_file_content import get_file_content
 from conversation_state import CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
@@ -18,6 +19,8 @@ class ConversationHandler:
         self.bot = bot
         self.message = message
         self.language_code = message.from_user.language_code
+        set_localization(self.language_code)
+
         self.chat_id = message.chat.id
         self.user_id = message.from_user.id
         self.conversation = json.loads(open("conversation.json").read())
@@ -138,25 +141,23 @@ class ConversationHandler:
         }
 
         state["results"]["page"] = page + 1
-        self.initialize_next_step(
-            ConversationState.RESULTS_PAGE, state, format_message_args_map=format_args)
-
+        
         # render cards by template
-        card_template = get_file_content('templates/information_card.template')
         node_template = get_file_content('templates/information_node.template')
 
         mapped_data = map(lambda x: InformationNode(
             x["ID"], 25, x["Hyperlink"], "maplink", x["Category"]), data)
         nodes = '\n'.join(
             map(lambda x: node_template.format_map(x.to_map()), mapped_data))
-        message_content = {
-            "header": "header",
-            "content": nodes,
-            "footer": "footer"
+
+        header = t("results_for_category") if page == 0 else t("more_results_for_category")
+        format_args = {
+            "card_header": header.format(category=request_category["name"]),
+            "card_content": nodes,
+            "card_footer": '' if can_load_more else t("no_more_results_available")
         }
-        message = card_template.format_map(message_content)
-        self.bot.send_message(
-            self.chat_id, message, reply_markup=ReplyKeyboardRemove())
+        self.initialize_next_step(
+            ConversationState.RESULTS_PAGE, state, format_message_args_map=format_args)
 
     def process_unknown_prompt(self, conv_state: ConversationState, state):
         for message_text, kwargs in self.__list_messages(ERROR, state,
