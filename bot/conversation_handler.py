@@ -12,6 +12,7 @@ from information_node import InformationNode
 from get_file_content import get_file_content
 from conversation_state import CATEGORY_TO_CONV_STATE, CONV_STATE_TO_CATEGORY, RESULTS_PAGE, SUGGEST_LOCATION_CHANGE, SUPPORT_SUBCATEGORY, ERROR, SUPPORT_CATEGORY
 from local_providers.get_centralized_info import get_centralized_info
+from local_providers.get_supported_countries import get_supported_countries
 from local_providers.state import ConversationState, update_state, set_state
 
 
@@ -28,6 +29,7 @@ class ConversationHandler:
         self.chat_id = message.chat.id
         self.user_id = message.from_user.id
         self.conversation = json.loads(open("conversation.json").read())
+        self.supported_countries = get_supported_countries()
 
     def __list_messages(self, category, state=None, reply_markup_category=None, format_message_args_map={}):
         result = []
@@ -75,14 +77,20 @@ class ConversationHandler:
             if t(button["text_key"]) == button_text:
                 return button["id"]
 
+    def __send_response_message(self, message: str, **kwargs):
+        self.bot.send_message(self.chat_id, message,
+                              parse_mode='Markdown', **kwargs)
+
+    def __is_country_supported(self, country_code: str):
+        return country_code.upper() in self.supported_countries
+
     def get_reply_options(self, category):
         for button in self.conversation[category].get("reply_markup", []):
             yield t(button["text_key"])
 
     def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False, format_message_args_map={}):
         for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data, format_message_args_map=format_message_args_map):
-            self.bot.send_message(self.chat_id, message_text,
-                                  parse_mode='Markdown', **kwargs)
+            self.__send_response_message(message_text, **kwargs)
 
         if replace_state_with_new_value:
             set_state(self.user_id, state, data)
@@ -99,8 +107,12 @@ class ConversationHandler:
         geo_location = get_location_by_coordinates(
             shared_coordinates.latitude, shared_coordinates.longitude)
         if not geo_location:
-            self.initialize_next_step(ConversationState.LOCATION_ERROR, {})
-            self.initialize_next_step(ConversationState.REQUEST_LOCATION, {})
+            self.__send_response_message(t("location_error"))
+            return
+
+        if not self.__is_country_supported(geo_location["country_code"]):
+            self.__send_response_message(t("unsupported_location").format(
+                country=geo_location["country_name"]))
             return
 
         state = {

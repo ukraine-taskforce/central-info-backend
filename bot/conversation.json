@@ -22,13 +22,6 @@
       }
     ]
   },
-  "location_error": {
-    "message": [
-      {
-        "text_key": "location_error"
-      }
-    ]
-  },
   "support_category": {
     "message": [
       {

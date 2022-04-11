@@ -8,6 +8,9 @@
   "location_error": {
     "en": "We failed to process your location. Please, contact our support or try again later"
   },
+  "unsupported_location": {
+    "en": "You current location country ({country}) is not supported"
+  },
   "choose_category_message": {
     "en": "❓ What do you want to know?"
   },

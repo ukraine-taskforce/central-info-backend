@@ -12,7 +12,7 @@ def set_localization(localization: str):
     global __current_localization
     __current_localization = localization
 
-def t(text_key: str):
+def t(text_key: str) -> str:
     entry = __texts.get(text_key)
     if not entry:
         raise 'Text not present'
