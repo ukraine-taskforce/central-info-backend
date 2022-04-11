@@ -5,6 +5,9 @@
   "request_location_message": {
     "en": "📍 Where are you looking for information?"
   },
+  "location_error": {
+    "en": "We failed to process your location. Please, contact our support or try again later"
+  },
   "choose_category_message": {
     "en": "❓ What do you want to know?"
   },

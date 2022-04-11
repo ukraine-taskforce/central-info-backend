@@ -17,7 +17,7 @@ bot = init_bot()
 
 logging.getLogger().setLevel(logging.INFO)
 
-# TODO: adjust for aws before publishing
+# TODO: test (& possibly adjust) for aws before publishing
 def lambda_handler(event: dict, context):
     request = event["body"]
     if isinstance(request, str):

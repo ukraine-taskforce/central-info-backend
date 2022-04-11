@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, Message
+from geo_api.geo_helpers import get_location_by_coordinates
 from text_translations import t, set_localization
 from information_node import InformationNode
 from get_file_content import get_file_content
@@ -18,6 +19,8 @@ class ConversationHandler:
         self.bot = bot
         self.message = message
         self.language_code = message.from_user.language_code
+        # afaik should work for synchronous scenarios
+        # where an instance is created per thread 
         set_localization(self.language_code)
 
         self.chat_id = message.chat.id
@@ -84,19 +87,28 @@ class ConversationHandler:
             update_state(self.user_id, state, data)
 
     def start(self):
-        state = {}
         self.initialize_next_step(
-            ConversationState.START, state, replace_state_with_new_value=True)
-        self.initialize_next_step(
-            ConversationState.REQUEST_LOCATION, state)
+            ConversationState.START, {}, replace_state_with_new_value=True)
+        self.initialize_next_step(ConversationState.REQUEST_LOCATION, {})
 
     def location(self):
-        logging.info(f'Location received: {self.message.location}')
-        state = {"user": {"language_code": self.language_code, "id": str(self.user_id)},
-                 "support_category": {
-                     "location": {
-                         "lat": self.message.location.latitude, "lon": self.message.location.longitude},
-                     "timestamp": datetime.now().replace(microsecond=0).isoformat()}}
+        shared_coordinates = self.message.location
+        geo_location = get_location_by_coordinates(
+            shared_coordinates.longitude, shared_coordinates.latitude)
+        if not geo_location:
+            self.initialize_next_step(ConversationState.LOCATION_ERROR, {})
+            self.initialize_next_step(ConversationState.REQUEST_LOCATION, {})
+            return
+
+        state = {
+            "user": {
+                "language_code": self.language_code,
+                "id": str(self.user_id),
+                "location": geo_location,
+                "timestamp": datetime.now().replace(microsecond=0).isoformat()
+            },
+            "request": {}
+        }
 
         self.initialize_next_step(
             ConversationState.SUPPORT_CATEGORY, state, replace_state_with_new_value=True)
@@ -104,14 +116,14 @@ class ConversationHandler:
     def category(self, state):
         selected_category = self.__get_button_id(
             SUPPORT_CATEGORY, self.message.text)
-        state["support_category"]["type"] = selected_category
+        state["request"]["support_category"] = selected_category
 
         self.initialize_next_step(ConversationState.SUPPORT_SUBCATEGORY, state)
 
     def subcategory(self, state):
         selected_category = self.__get_button_id(
             SUPPORT_SUBCATEGORY, self.message.text)
-        state["support_category"]["support_subcategory"] = {
+        state["request"]["support_subcategory"] = {
             "id": selected_category,
             "name": self.message.text
         }
@@ -130,9 +142,10 @@ class ConversationHandler:
             return
 
         # load page data
-        request_category = state["support_category"]["support_subcategory"]
+        request_category = state["request"]["support_subcategory"]
+        location_country_code = state["user"]["location"]["country_code"]
         data, can_load_more = get_centralized_info(
-            "TODO", request_category["id"], self.__results_page_size, page)
+            location_country_code, request_category["id"], self.__results_page_size, page)
         format_args = {
             "category": request_category["name"]
         }

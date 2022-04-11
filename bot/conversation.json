@@ -22,6 +22,13 @@
       }
     ]
   },
+  "location_error": {
+    "message": [
+      {
+        "text_key": "location_error"
+      }
+    ]
+  },
   "support_category": {
     "message": [
       {
@@ -60,92 +67,92 @@
     "reply_markup": [
       {
         "id": "ENTRY_STEPS",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_entry_steps"
       },
       {
         "id": "HOUSING",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_housing"
       },
       {
         "id": "FINANCIAL_SUPPORT",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_financial"
       },
       {
         "id": "LANGUAGE_LEARNING",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_language"
       },
       {
         "id": "HEALTH_CARE",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_health"
       },
       {
         "id": "LEGAL_SUPPORT",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_legal"
       },
       {
         "id": "ELEMENTARY_EDUCATION",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_elementary"
       },
       {
         "id": "SCHOOLS",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_schools"
       },
       {
         "id": "UNIVERSITIES",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_universities"
       },
       {
         "id": "COMMUNITY_GROUPS",
-        "condition": "\"{state[support_category][type]}\" == \"GENERAL\"",
+        "condition": "\"{state[request][support_category]}\" == \"GENERAL\"",
         "text_key": "btn_community"
       },
       {
         "id": "PREGNANCY",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_pregnancy"
       },
       {
         "id": "ELDERLY",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_elderly"
       },
       {
         "id": "DISABILITIES",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_disabilities"
       },
       {
         "id": "CHRONIC_DESEASE",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_desease"
       },
       {
         "id": "PSYCHOLOGICAL_SUPPORT",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_psych_support"
       },
       {
         "id": "GOODS",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_goods"
       },
       {
         "id": "KIDS_CARE",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_kids_care"
       },
       {
         "id": "VETS",
-        "condition": "\"{state[support_category][type]}\" == \"MEDICS\"",
+        "condition": "\"{state[request][support_category]}\" == \"MEDICS\"",
         "text_key": "btn_vets"
       }
     ]
