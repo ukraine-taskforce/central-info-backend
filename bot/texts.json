@@ -17,6 +17,12 @@
   "result_card": {
     "en": "{card_header}\n\n{card_content}\n\n{card_footer}"
   },
+  "website": {
+    "en": "Website"
+  },
+  "map": {
+    "en": "Map"
+  },
   "suggest_location_change_message": {
     "en": "📍 Are you still looking for information in the same location or do you want to change it?"
   },

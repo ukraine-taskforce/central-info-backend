@@ -1,10 +1,12 @@
+from email import message
+from functools import reduce
 import json
 import logging
 
 from datetime import datetime
 from telebot import TeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, Message
-from geo_api.geo_helpers import get_location_by_coordinates
+from geo_api.geo_helpers import get_location_by_coordinates, get_distance, get_map_link
 from text_translations import t, set_localization
 from information_node import InformationNode
 from get_file_content import get_file_content
@@ -20,7 +22,7 @@ class ConversationHandler:
         self.message = message
         self.language_code = message.from_user.language_code
         # afaik should work for synchronous scenarios
-        # where an instance is created per thread 
+        # where an instance is created per thread
         set_localization(self.language_code)
 
         self.chat_id = message.chat.id
@@ -79,7 +81,8 @@ class ConversationHandler:
 
     def initialize_next_step(self, state: ConversationState, data, replace_state_with_new_value=False, format_message_args_map={}):
         for message_text, kwargs in self.__list_messages(CONV_STATE_TO_CATEGORY[state], data, format_message_args_map=format_message_args_map):
-            self.bot.send_message(self.chat_id, message_text, **kwargs)
+            self.bot.send_message(self.chat_id, message_text,
+                                  parse_mode='Markdown', **kwargs)
 
         if replace_state_with_new_value:
             set_state(self.user_id, state, data)
@@ -94,7 +97,7 @@ class ConversationHandler:
     def location(self):
         shared_coordinates = self.message.location
         geo_location = get_location_by_coordinates(
-            shared_coordinates.longitude, shared_coordinates.latitude)
+            shared_coordinates.latitude, shared_coordinates.longitude)
         if not geo_location:
             self.initialize_next_step(ConversationState.LOCATION_ERROR, {})
             self.initialize_next_step(ConversationState.REQUEST_LOCATION, {})
@@ -156,8 +159,19 @@ class ConversationHandler:
         # render cards by template
         node_template = get_file_content('templates/information_node.template')
 
-        mapped_data = map(lambda x: InformationNode(
-            x["ID"], 25, x["Hyperlink"], "maplink", x["Category"]), data)
+        location = state["user"]["location"]
+        user_coordinates = (location["latitude"], location["longitude"])
+
+        def map_information_node(node_json):
+            coordinates = (node_json["Latitude"], node_json["Longitude"])
+            return InformationNode(
+                node_json["ID"], get_distance(
+                    user_coordinates, coordinates),
+                f'[{t("website")}]({node_json["Hyperlink"]})',
+                f'[{t("map")}]({get_map_link(coordinates)})',
+                node_json["Category"])
+
+        mapped_data = map(map_information_node, data)
         nodes = '\n'.join(
             map(lambda x: node_template.format_map(x.to_map()), mapped_data))
 
